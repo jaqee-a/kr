@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Sparkles} from 'lucide-react';
 import { ImageUploadButton } from './ImageUploadButton';
+import { generateGroceriesList } from '@/lib/fetch';
 
 interface ShoppingInputProps {
   onAdd: (item: string) => void;
@@ -15,7 +16,8 @@ export function ShoppingInput({ onAdd, onFocus }: ShoppingInputProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-      onAdd(input.trim());
+      generateGroceriesList(input).then((data) => console.log(data));
+      // onAdd(input.trim());
       handleFocus(false);
       setInput('');
       setSelectedImage(null);

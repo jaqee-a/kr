@@ -1,8 +1,7 @@
-import { nanoid } from 'nanoid';
 import { ShoppingInput } from './ShoppingInput';
 import { ShoppingList } from './ShoppingList';
 import { RecentLists } from './RecentLists';
-import { type ShoppingItem, type GroceryList, State } from '../types';
+import { type ShoppingItem, type GroceryList, State, GroceryOrder } from '../types';
 import { useState } from 'react';
 import { SignedIn, SignedOut } from '@clerk/nextjs';
 import { AuthForm } from './AuthForm';
@@ -27,20 +26,19 @@ export function MainContent({
     const storeParts = nameParts.join(' ').split(' from ');
 
     const newItem: ShoppingItem = {
-      id: nanoid(),
-      name: storeParts[0],
+      english_name: storeParts[0],
       quantity: parseInt(quantity) || 1,
-      store: storeParts[1] || 'Any store',
+      supplier: storeParts[1] || 'Any store',
     };
 
     setItems((prev) => [...prev, newItem]);
     setCurrentState(State.LIST);
   };
 
-  const handleUpdateQuantity = (id: string, change: number) => {
+  const handleUpdateQuantity = (name: string, change: number) => {
     setItems((prev) =>
       prev.map((item) =>
-        item.id === id
+        item.english_name === name
           ? { ...item, quantity: Math.max(0, item.quantity + change) }
           : item
       )
@@ -55,7 +53,7 @@ export function MainContent({
     setCurrentState(State.ORDER_CONFIRMED);
   };
 
-  const handleReuseList = (list: GroceryList) => {
+  const handleReuseList = (list: GroceryOrder) => {
     setItems(list.items);
     setCurrentState(State.LIST);
   };
@@ -72,22 +70,53 @@ export function MainContent({
   }
 
   const renderOrderConfirmedState = () => {
-    return <OrderConfirmed onNewOrder={handleNewOrder} />
+    return <>
+      <div className="flex flex-col items-center gap-8 mb-8">
+        <img 
+          src='./logo.png'
+          width={200}
+        />
+        <h1 className="text-3xl font-semibold text-center text-gray-900">
+          Order Confirmed
+        </h1>
+      </div>
+      <OrderConfirmed onNewOrder={handleNewOrder} />
+    </>
   }
 
   const renderListState = () => {
-    return <ShoppingList items={items} onUpdateQuantity={handleUpdateQuantity} onOrderConfirmed={handleOrderConfirmed} />;
+    return <>
+      <div className="flex flex-col items-center gap-8 mb-8">
+        <img 
+          src='./logo.png'
+          width={200}
+        />
+        <h1 className="text-3xl font-semibold text-center text-gray-900">
+          Create your shopping list
+        </h1>
+      </div>
+      <ShoppingList items={items} onUpdateQuantity={handleUpdateQuantity} onOrderConfirmed={handleOrderConfirmed} />;
+    </>
   }
 
   const renderInputState = () => {
     return <>
+      <div className="flex flex-col items-center gap-8 mb-8">
+        <img 
+          src='./logo.png'
+          width={200}
+        />
+        <h1 className="text-3xl font-semibold text-center text-gray-900">
+          Create your shopping list
+        </h1>
+      </div>
       <div className="space-y-4">
         <ShoppingInput onAdd={handleAddItem} onFocus={setInputFocused} />
       </div>
 
-      {!inputFocused && (
-        <RecentLists lists={recentLists} onReuse={handleReuseList} />
-      )}
+      {/* {!inputFocused && ( */}
+      {/*   <RecentLists lists={recentLists} onReuse={handleReuseList} /> */}
+      {/* )} */}
     </>
   }
 
@@ -98,15 +127,6 @@ export function MainContent({
       </SignedOut>
       <SignedIn>
         <main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-          <div className="flex flex-col items-center gap-8 mb-8">
-            <img 
-              src='./logo.png'
-              width={200}
-            />
-            <h1 className="text-3xl font-semibold text-center text-gray-900">
-              Create your shopping list
-            </h1>
-          </div>
           {renderState()}
         </main>
       </SignedIn>

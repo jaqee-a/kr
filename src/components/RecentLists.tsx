@@ -1,9 +1,8 @@
-import { Clock } from 'lucide-react';
-import type { GroceryList } from '../types';
+import type { GroceryOrder, GroceryList } from '../types';
 
 interface RecentListsProps {
-  lists: GroceryList[];
-  onReuse: (list: GroceryList) => void;
+  lists: GroceryOrder[];
+  onReuse: (list: GroceryOrder) => void;
 }
 
 export function RecentLists({ lists, onReuse }: RecentListsProps) {
@@ -24,7 +23,7 @@ export function RecentLists({ lists, onReuse }: RecentListsProps) {
                   <span className="text-m font-bold text-black">{list.date}</span>
                 </div>
                 <p className="mt-2 text-sm text-black">
-                  {list.items.map((item) => `${item.quantity}${item.name}`).join(', ')}
+                  {list.items.map((item) => `${item.quantity} ${item.english_name}`).join(', ')}
                 </p>
               </div>
               <button

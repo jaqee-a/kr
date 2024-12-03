@@ -8,19 +8,8 @@ interface OrderConfirmedProps {
 
 export default function OrderConfirmed({ onNewOrder }: OrderConfirmedProps) {
   return (
-    <div className="min-h-screen bg-[#EFF5F3] flex flex-col items-center justify-center px-4">
+    <div className="bg-[#EFF5F3] flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Image
-            src="/logo.png"
-            alt="Kitchen Restocker"
-            width={150}
-            height={150}
-            className="mx-auto mb-6"
-          />
-          <h1 className="text-2xl text-black font-bold mb-2">Order confirmed</h1>
-        </div>
-
         <div className="bg-white rounded-lg p-8 shadow">
           <div className="flex justify-between items-center mb-8">
             <div className="w-24 h-24">

@@ -1,16 +1,19 @@
 export interface ShoppingItem {
-  id: string;
-  name: string;
+  arabic_name?: string;
+  english_name: string;
+  supplier: string;
   quantity: number;
-  store: string;
-  notes?: string;
-}
+};
 
 export interface GroceryList {
-  id: string;
-  date: string;
   items: ShoppingItem[];
-}
+};
+
+export interface GroceryOrder {
+  id: string;
+  items: ShoppingItem[];
+  date: string;
+};
 
 export enum State {
   INPUT,
