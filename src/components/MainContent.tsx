@@ -21,25 +21,22 @@ export function MainContent({
   const [inputFocused, setInputFocused] = useState(false);
   const [currentState, setCurrentState] = useState<State>(State.INPUT);
 
-  const handleAddItem = (input: string) => {
-    const [quantity, ...nameParts] = input.split(' ');
-    const storeParts = nameParts.join(' ').split(' from ');
-
-    const newItem: ShoppingItem = {
-      english_name: storeParts[0],
-      quantity: parseInt(quantity) || 1,
-      supplier: storeParts[1] || 'Any store',
-    };
-
-    setItems((prev) => [...prev, newItem]);
+  const handleAddItem = (list: GroceryList) => {
+    setItems(list.items);
     setCurrentState(State.LIST);
+  };
+
+  const handleDeleteItem = (name: string) => {
+    setItems((prev) =>
+      prev.filter((item) => item.english_name !== name)
+    );
   };
 
   const handleUpdateQuantity = (name: string, change: number) => {
     setItems((prev) =>
       prev.map((item) =>
         item.english_name === name
-          ? { ...item, quantity: Math.max(0, item.quantity + change) }
+          ? { ...item, quantity: Math.max(0, parseInt(item.quantity + '') + change) }
           : item
       )
     );
@@ -95,7 +92,7 @@ export function MainContent({
           Create your shopping list
         </h1>
       </div>
-      <ShoppingList items={items} onUpdateQuantity={handleUpdateQuantity} onOrderConfirmed={handleOrderConfirmed} />;
+      <ShoppingList items={items} onDelete={handleDeleteItem} onUpdateQuantity={handleUpdateQuantity} onOrderConfirmed={handleOrderConfirmed} />;
     </>
   }
 

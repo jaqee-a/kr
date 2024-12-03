@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Sparkles} from 'lucide-react';
 import { ImageUploadButton } from './ImageUploadButton';
-import { generateGroceriesList } from '@/lib/fetch';
+import { GroceryList } from '@/types';
 
 interface ShoppingInputProps {
-  onAdd: (item: string) => void;
+  onAdd: (item: GroceryList) => void;
   onFocus: (focused: boolean) => void;
 }
 
@@ -13,11 +13,22 @@ export function ShoppingInput({ onAdd, onFocus }: ShoppingInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (input.trim()) {
-      generateGroceriesList(input).then((data) => console.log(data));
-      // onAdd(input.trim());
+
+      const response = await fetch('/api/extract', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "text": input
+        })
+      });
+
+      onAdd(await response.json());
       handleFocus(false);
       setInput('');
       setSelectedImage(null);
