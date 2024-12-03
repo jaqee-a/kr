@@ -15,4 +15,5 @@ export interface GroceryList {
 export enum State {
   INPUT,
   LIST,
+  ORDER_CONFIRMED
 }

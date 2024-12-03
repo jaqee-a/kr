@@ -4,8 +4,9 @@ import { ShoppingList } from './ShoppingList';
 import { RecentLists } from './RecentLists';
 import { type ShoppingItem, type GroceryList, State } from '../types';
 import { useState } from 'react';
-import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 import { AuthForm } from './AuthForm';
+import OrderConfirmed from './OrderConfirmed';
 
 interface MainContentProps {
   items: ShoppingItem[];
@@ -46,8 +47,17 @@ export function MainContent({
     );
   };
 
+  const handleNewOrder = () => {
+    setCurrentState(State.INPUT);
+  };
+  
+  const handleOrderConfirmed = () => {
+    setCurrentState(State.ORDER_CONFIRMED);
+  };
+
   const handleReuseList = (list: GroceryList) => {
     setItems(list.items);
+    setCurrentState(State.LIST);
   };
 
   const renderState = () => {
@@ -56,11 +66,17 @@ export function MainContent({
         return renderInputState();
       case State.LIST:
         return renderListState();
+      case State.ORDER_CONFIRMED:
+        return renderOrderConfirmedState();
     }
   }
 
+  const renderOrderConfirmedState = () => {
+    return <OrderConfirmed onNewOrder={handleNewOrder} />
+  }
+
   const renderListState = () => {
-    return <ShoppingList items={items} onUpdateQuantity={handleUpdateQuantity} />;
+    return <ShoppingList items={items} onUpdateQuantity={handleUpdateQuantity} onOrderConfirmed={handleOrderConfirmed} />;
   }
 
   const renderInputState = () => {
