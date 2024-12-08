@@ -11,28 +11,30 @@ interface ShoppingInputProps {
 export function ShoppingInput({ onAdd, onFocus }: ShoppingInputProps) {
   const [input, setInput] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImages, setSelectedImages] = useState<FileList | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const form = new FormData();
+
     if (input.trim()) {
-
-      const response = await fetch('/api/extract', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          "text": input
-        })
-      });
-
-      onAdd(await response.json());
-      handleFocus(false);
-      setInput('');
-      setSelectedImage(null);
+      form.append('text', input);
     }
+    
+    Array.from(selectedImages ?? []).forEach((selectedImage) => {
+      form.append('files', selectedImage);
+    })
+    
+    const response = await fetch('/api/extract', {
+      method: 'POST',
+      body: form
+    });
+
+    onAdd(await response.json());
+    handleFocus(false);
+    setInput('');
+    setSelectedImages(null);
   };
 
   const handleFocus = (focused: boolean) => {
@@ -40,8 +42,8 @@ export function ShoppingInput({ onAdd, onFocus }: ShoppingInputProps) {
     onFocus(focused);
   };
 
-  const handleImageSelect = (file: File) => {
-    setSelectedImage(file);
+  const handleImageSelect = (files: FileList) => {
+    setSelectedImages(files);
   };
 
   return (
@@ -68,21 +70,21 @@ export function ShoppingInput({ onAdd, onFocus }: ShoppingInputProps) {
           {!isFocused &&
           <ImageUploadButton onImageSelect={handleImageSelect} />}
         </div>
-        {selectedImage && (
+        {Array.from(selectedImages ?? []).map((selectedImage) => (
           <div className="mt-2 px-4">
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <span>📎</span>
               <span>{selectedImage.name}</span>
               <button
                 type="button"
-                onClick={() => setSelectedImage(null)}
+                onClick={() => setSelectedImages(null)}
                 className="text-red-500 hover:text-red-600 ml-2"
               >
                 Remove
               </button>
             </div>
           </div>
-        )}
+        ))}
         {isFocused && (
           <div
             className={`absolute bottom-4 right-4 flex gap-2 transition-opacity duration-200`}
@@ -92,7 +94,7 @@ export function ShoppingInput({ onAdd, onFocus }: ShoppingInputProps) {
                 onClick={() => {
                   setInput('');
                   handleFocus(false);
-                  setSelectedImage(null);
+                  setSelectedImages(null);
                 }}
                 className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
               >

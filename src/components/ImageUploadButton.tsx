@@ -1,14 +1,14 @@
 import { Camera } from 'lucide-react';
 
 interface ImageUploadButtonProps {
-  onImageSelect: (file: File) => void;
+  onImageSelect: (file: FileList) => void;
 }
 
 export function ImageUploadButton({ onImageSelect }: ImageUploadButtonProps) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      onImageSelect(file);
+    const files = event.target.files;
+    if (files?.length) {
+      onImageSelect(files);
     }
   };
 
@@ -20,6 +20,7 @@ export function ImageUploadButton({ onImageSelect }: ImageUploadButtonProps) {
           accept="image/*"
           className="hidden"
           onChange={handleFileChange}
+          multiple
         />
         <div className="p-2 rounded-full hover:bg-gray-100 transition-colors">
           <Camera className="w-5 h-5 text-gray-400" />
